@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+ENV/
+.venv
+*.log
+.DS_Store
+youtubedataapikey.json
+AI Examples Crawler/
+email_digest_*.html
+found_examples_2025*.json
+AI Examples Hub - Opal.html
+

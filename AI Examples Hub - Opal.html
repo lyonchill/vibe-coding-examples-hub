@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Examples Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom scrollbar for a more refined look */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #ebf1ff;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #003c72;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #323c4c;
+        }
+        /* Simple fade-in animation */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Hide number input arrows */
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-dark': '#003c72',
+                        'primary-light': '#f9f9ff',
+                        'secondary-dark': '#323c4c',
+                        'secondary-light': '#ebf1ff',
+                        'background': '#d8e3f8',
+                        'error': '#de3730',
+                        'neutral-dark': '#3a3b3e',
+                        'neutral-light': '#faf9fd',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-secondary-dark antialiased">
+
+    <div id="app" class="min-h-screen">
+        <!-- Navigation Bar -->
+        <nav class="bg-primary-light/80 backdrop-blur-md sticky top-0 z-50 shadow-md">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <div class="flex items-center">
+                        <a href="#" class="flex items-center space-x-2 nav-link" data-page="gallery">
+                            <svg class="h-8 w-8 text-primary-dark" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 3v1.5M4.5 8.25H3m18 0h-1.5M4.5 12H3m18 0h-1.5m-15 3.75H3m18 0h-1.5M8.25 19.5V21M12 3v1.5m0 15V21m3.75-18v1.5m0 15V21m-9-1.5h10.5a2.25 2.25 0 002.25-2.25V7.5a2.25 2.25 0 00-2.25-2.25H7.5A2.25 2.25 0 005.25 7.5v9a2.25 2.25 0 002.25 2.25z" />
+                            </svg>
+                            <span class="font-bold text-xl text-primary-dark">AI Examples Hub</span>
+                        </a>
+                    </div>
+                    <div class="hidden md:block">
+                        <div class="ml-10 flex items-baseline space-x-4">
+                            <a href="#" class="text-secondary-dark hover:bg-secondary-light hover:text-primary-dark px-3 py-2 rounded-md text-sm font-medium nav-link" data-page="gallery">Gallery</a>
+                            <a href="#" class="text-secondary-dark hover:bg-secondary-light hover:text-primary-dark px-3 py-2 rounded-md text-sm font-medium nav-link" data-page="submission">Submit New Example</a>
+                        </div>
+                    </div>
+                    <div class="-mr-2 flex md:hidden">
+                        <button type="button" id="mobile-menu-button" class="bg-secondary-light inline-flex items-center justify-center p-2 rounded-md text-primary-dark hover:text-white hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-primary-dark focus:ring-white" aria-controls="mobile-menu" aria-expanded="false">
+                            <span class="sr-only">Open main menu</span>
+                            <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+                            <svg class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="md:hidden hidden" id="mobile-menu">
+                <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                    <a href="#" class="text-secondary-dark hover:bg-secondary-light hover:text-primary-dark block px-3 py-2 rounded-md text-base font-medium nav-link" data-page="gallery">Gallery</a>
+                    <a href="#" class="text-secondary-dark hover:bg-secondary-light hover:text-primary-dark block px-3 py-2 rounded-md text-base font-medium nav-link" data-page="submission">Submit New Example</a>
+                </div>
+            </div>
+        </nav>
+
+        <main>
+            <!-- Gallery Page -->
+            <div id="gallery-page" class="page-content container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <header class="text-center mb-8">
+                    <h1 class="text-4xl md:text-5xl font-bold text-primary-dark mb-2">Explore AI-Powered Projects</h1>
+                    <p class="text-lg text-secondary-dark max-w-3xl mx-auto">A curated gallery of innovative examples built with modern AI tools.</p>
+                </header>
+
+                <!-- Filters -->
+                <div id="filters" class="bg-primary-light p-4 rounded-lg shadow-md mb-8 sticky top-[65px] z-40">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="relative">
+                            <input type="search" id="search-input" placeholder="Search by title or description..." class="w-full pl-10 pr-4 py-2 border border-secondary-light rounded-md focus:ring-primary-dark focus:border-primary-dark">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                    <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                        </div>
+                        <select id="tool-filter" class="filter-select w-full p-2 border border-secondary-light rounded-md focus:ring-primary-dark focus:border-primary-dark"></select>
+                        <select id="capability-filter" class="filter-select w-full p-2 border border-secondary-light rounded-md focus:ring-primary-dark focus:border-primary-dark"></select>
+                        <select id="platform-filter" class="filter-select w-full p-2 border border-secondary-light rounded-md focus:ring-primary-dark focus:border-primary-dark"></select>
+                    </div>
+                </div>
+
+                <!-- Project Grid -->
+                <div id="project-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                    <!-- Project cards will be injected here -->
+                </div>
+                <div id="no-results" class="hidden text-center py-16">
+                    <h3 class="text-2xl font-semibold text-secondary-dark">No projects found</h3>
+                    <p class="text-neutral-dark mt-2">Try adjusting your search or filter criteria.</p>
+                </div>
+            </div>
+
+            <!-- Detail Page -->
+            <div id="detail-page" class="page-content hidden container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <!-- Detail content will be injected here -->
+            </div>
+
+            <!-- Submission Page -->
+            <div id="submission-page" class="page-content hidden container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <div class="max-w-2xl mx-auto bg-primary-light p-8 rounded-xl shadow-lg">
+                    <h2 class="text-3xl font-bold text-primary-dark mb-6 text-center">Submit a New Example</h2>
+                    <form id="submission-form">
+                        <!-- Step 1 -->
+                        <div class="form-step active" data-step="1">
+                            <h3 class="text-xl font-semibold text-secondary-dark mb-4">Project Details</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="projectName" class="block text-sm font-medium text-neutral-dark">Project Name</label>
+                                    <input type="text" id="projectName" name="projectName" required class="mt-1 block w-full px-3 py-2 border border-secondary-light rounded-md shadow-sm focus:outline-none focus:ring-primary-dark focus:border-primary-dark">
+                                </div>
+                                <div>
+                                    <label for="projectDescription" class="block text-sm font-medium text-neutral-dark">Description</label>
+                                    <textarea id="projectDescription" name="projectDescription" rows="4" required class="mt-1 block w-full px-3 py-2 border border-secondary-light rounded-md shadow-sm focus:outline-none focus:ring-primary-dark focus:border-primary-dark"></textarea>
+                                </div>
+                                <div>
+                                    <label for="thumbnailUrl" class="block text-sm font-medium text-neutral-dark">Thumbnail URL</label>
+                                    <input type="url" id="thumbnailUrl" name="thumbnailUrl" required class="mt-1 block w-full px-3 py-2 border border-secondary-light rounded-md shadow-sm focus:outline-none focus:ring-primary-dark focus:border-primary-dark">
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Step 2 -->
+                        <div class="form-step hidden" data-step="2">
+                            <h3 class="text-xl font-semibold text-secondary-dark mb-4">Technical Information</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="aiTools" class="block text-sm font-medium text-neutral-dark">AI Tools Used (comma-separated)</label>
+                                    <input type="text" id="aiTools" name="aiTools" required class="mt-1 block w-full px-3 py-2 border border-secondary-light rounded-md shadow-sm focus:outline-none focus:ring-primary-dark focus:border-primary-dark">
+                                </div>
+                                <div>
+                                    <label for="capabilities" class="block text-sm font-medium text-neutral-dark">Capabilities / Tags (comma-separated)</label>
+                                    <input type="text" id="capabilities" name="capabilities" required class="mt-1 block w-full px-3 py-2 border border-secondary-light rounded-md shadow-sm focus:outline-none focus:ring-primary-dark focus:border-primary-dark">
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Step 3 -->
+                        <div class="form-step hidden" data-step="3">
+                            <h3 class="text-xl font-semibold text-secondary-dark mb-4">Additional Metadata</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="buildType" class="block text-sm font-medium text-neutral-dark">Build Type (e.g., Web App, Figma Plugin)</label>
+                                    <input type="text" id="buildType" name="buildType" required class="mt-1 block w-full px-3 py-2 border border-secondary-light rounded-md shadow-sm focus:outline-none focus:ring-primary-dark focus:border-primary-dark">
+                                </div>
+                                <div>
+                                    <label for="complexity" class="block text-sm font-medium text-neutral-dark">Complexity</label>
+                                    <select id="complexity" name="complexity" required class="mt-1 block w-full px-3 py-2 border border-secondary-light rounded-md shadow-sm focus:outline-none focus:ring-primary-dark focus:border-primary-dark">
+                                        <option>Beginner</option>
+                                        <option>Intermediate</option>
+                                        <option>Advanced</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Step 4: Confirmation -->
+                        <div class="form-step hidden" data-step="4">
+                            <div class="text-center">
+                                <svg class="mx-auto h-12 w-12 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <h3 class="mt-2 text-2xl font-semibold text-primary-dark">Submission Received!</h3>
+                                <p class="mt-2 text-sm text-secondary-dark">Thank you for contributing to the AI Examples Hub. Your submission will be reviewed shortly.</p>
+                                <button type="button" id="new-submission-btn" class="mt-6 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-dark hover:bg-secondary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-dark">
+                                    Submit Another
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Navigation -->
+                        <div class="mt-8 flex justify-between" id="form-nav">
+                            <button type="button" id="prev-btn" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-secondary-dark bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-dark">Previous</button>
+                            <button type="button" id="next-btn" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-dark hover:bg-secondary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-dark">Next</button>
+                            <button type="submit" id="submit-btn" class="hidden inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const projectsData = [
+          {
+            "id": 0,
+            "title": "AI-Powered Marketing Copy Generator",
+            "description": "A tool that generates diverse marketing copy variations (headlines, ad descriptions, social media posts) based on product features and target audience input. Users provide keywords and desired tone, and the AI suggests multiple compelling options, dramatically speeding up content creation.",
+            "ai_tools_used": [
+              "Cursor (for prompt engineering and backend logic)",
+              "n8n (for workflow automation and API integration)",
+              "OpenAI GPT-4 API"
+            ],
+            "category_tags": [
+              "Generative AI",
+              "NLP",
+              "Marketing Automation"
+            ],
+            "source_platform": "Internal Web App",
+            "original_url": "https://example.com/ai-copy-generator",
+            "creator_name": "AI Innovations Lab",
+            "creator_link": "https://ailab.dev",
+            "thumbnail_url": "https://images.unsplash.com/photo-1620712943543-2858200e9456?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "date_added": "2025-11-10"
+          },
+          {
+            "id": 1,
+            "title": "Figma Make: AI Mood Board & Concept Visualizer",
+            "description": "A Figma plugin that allows designers to generate mood boards and initial design concepts directly from text descriptions. Users input stylistic preferences, keywords, and themes, and the tool uses AI to fetch or create relevant images, color palettes, and even basic UI elements, integrating seamlessly into Figma.",
+            "ai_tools_used": [
+              "Figma Make (for UI integration and AI model orchestration)",
+              "Stability AI Stable Diffusion API",
+              "Midjourney API"
+            ],
+            "category_tags": [
+              "Generative AI",
+              "Computer Vision",
+              "Design Tooling"
+            ],
+            "source_platform": "Figma Community",
+            "original_url": "https://www.figma.com/community/plugin/ai-mood-visualizer",
+            "creator_name": "DesignSync AI",
+            "creator_link": "https://designsync.ai",
+            "thumbnail_url": "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "date_added": "2025-11-10"
+          },
+          {
+            "id": 2,
+            "title": "Smart Customer Support Triage with Sentiment Analysis",
+            "description": "An automated system that processes incoming customer support tickets, performs sentiment analysis, categorizes issues, and routes them to the appropriate department. It uses n8n to connect email/chat platforms to a sentiment analysis model and then to a CRM or project management tool, providing instant insights and reducing manual effort.",
+            "ai_tools_used": [
+              "n8n (for workflow automation, integration with CRMs and communication platforms)",
+              "Hugging Face Inference API (for sentiment analysis)",
+              "OpenAI GPT-3.5 API (for categorization and summarization)"
+            ],
+            "category_tags": [
+              "NLP",
+              "Machine Learning",
+              "Customer Service Automation"
+            ],
+            "source_platform": "Internal SaaS Tool",
+            "original_url": "https://supportflow.ai/smart-triage-solution",
+            "creator_name": "Automation Forge",
+            "creator_link": "https://automationforge.com",
+            "thumbnail_url": "https://images.unsplash.com/photo-1556155092-490a1ba16284?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "date_added": "2025-11-10"
+          },
+          {
+            "id": 3,
+            "title": "Lovable: Personalized Product Recommendation Engine",
+            "description": "An e-commerce integration that learns user preferences through explicit 'like/dislike' feedback and implicit browsing behavior via Lovable's feedback collection tools. It then uses this data to generate highly personalized product recommendations, improving conversion rates and user satisfaction.",
+            "ai_tools_used": [
+              "Lovable (for structured user feedback collection and preference scoring)",
+              "n8n (for integrating feedback data with e-commerce platforms and recommendation logic)",
+              "Custom ML (collaborative filtering via API)"
+            ],
+            "category_tags": [
+              "Machine Learning",
+              "Data Science",
+              "E-commerce"
+            ],
+            "source_platform": "E-commerce Plugin",
+            "original_url": "https://lovable.ai/solutions/product-recommendations",
+            "creator_name": "Preference AI",
+            "creator_link": "https://preferenceai.com",
+            "thumbnail_url": "https://images.unsplash.com/photo-1522204523234-8729aa6e3d5f?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "date_added": "2025-11-10"
+          },
+          {
+            "id": 4,
+            "title": "AI-Assisted UX Wireframe & Flow Generator",
+            "description": "A tool that takes plain language descriptions of user tasks or application features and generates initial low-fidelity wireframes and user flow diagrams. Cursor helps with translating complex requirements into actionable design components, while Figma Make assembles and visualizes them, reducing the initial design conceptualization time.",
+            "ai_tools_used": [
+              "Cursor (for translating natural language requirements into design component specifications)",
+              "Figma Make (for generating and arranging wireframe components and basic flows)",
+              "OpenAI GPT-4 Vision API"
+            ],
+            "category_tags": [
+              "Generative AI",
+              "Design Automation",
+              "NLP"
+            ],
+            "source_platform": "Custom Figma Plugin",
+            "original_url": "https://uxgen.dev/ai-wireframe-tool",
+            "creator_name": "Wireframe Wizard",
+            "creator_link": "https://wireframewizard.io",
+            "thumbnail_url": "https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "date_added": "2025-11-10"
+          },
+          {
+            "id": 5,
+            "title": "Automated Social Media Content & Scheduling Hub",
+            "description": "A platform that generates social media posts (text, hashtags, image prompts) based on given topics or articles, schedules them, and publishes them across various platforms. n8n orchestrates the entire workflow from content generation to scheduling and posting, with Cursor aiding in nuanced prompt refinement for varied content styles.",
+            "ai_tools_used": [
+              "n8n (for workflow orchestration, scheduling, and social media API integrations)",
+              "Cursor (for iterative content generation and prompt optimization)",
+              "OpenAI GPT-4 API (for text generation)",
+              "DALL-E 3 API (for image generation)"
+            ],
+            "category_tags": [
+              "Generative AI",
+              "NLP",
+              "Social Media Automation"
+            ],
+            "source_platform": "SaaS Platform",
+            "original_url": "https://socialflow.co/ai-content-suite",
+            "creator_name": "ContentPilot",
+            "creator_link": "https://contentpilot.io",
+            "thumbnail_url": "https://images.unsplash.com/photo-1611162616805-669b1fa7a892?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "date_added": "2025-11-10"
+          },
+          {
+            "id": 6,
+            "title": "AI Recipe Creator from Pantry Inventory",
+            "description": "Users input a list of ingredients they have in their pantry, and the AI generates unique recipe ideas tailored to those ingredients, dietary restrictions, and cooking preferences. n8n handles the input form, API calls, and displaying the structured recipe output, while Cursor helps refine the recipe generation logic.",
+            "ai_tools_used": [
+              "n8n (for user input forms, API calls, and data display)",
+              "Cursor (for developing and iterating on recipe generation prompts)",
+              "Google Gemini Pro API"
+            ],
+            "category_tags": [
+              "Generative AI",
+              "NLP",
+              "Lifestyle"
+            ],
+            "source_platform": "Web Application",
+            "original_url": "https://mychefai.app/pantry-recipes",
+            "creator_name": "PantryPal",
+            "creator_link": "https://pantrypal.app",
+            "thumbnail_url": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "date_added": "2025-11-10"
+          },
+          {
+            "id": 7,
+            "title": "Podcast Episode Key Moments & Summarizer",
+            "description": "An AI tool that takes a podcast audio file or URL, transcribes it, identifies key topics and discussion points, and generates a concise summary along with timestamps for important segments. n8n orchestrates the transcription and summarization APIs, making it easy to integrate into content workflows.",
+            "ai_tools_used": [
+              "n8n (for orchestrating audio processing, transcription, and summarization workflows)",
+              "OpenAI Whisper API (for audio transcription)",
+              "OpenAI GPT-4 API (for summarization and key moment identification)",
+              "Cursor (for refining summary prompts)"
+            ],
+            "category_tags": [
+              "NLP",
+              "Machine Learning",
+              "Content Creation"
+            ],
+            "source_platform": "Internal Content Tool",
+            "original_url": "https://podinsights.io/summarize",
+            "creator_name": "Audio Intelligence Co.",
+            "creator_link": "https://audiointel.co",
+            "thumbnail_url": "https://images.unsplash.com/photo-1589903308904-1010c2294adc?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "date_added": "2025-11-10"
+          },
+          {
+            "id": 8,
+            "title": "Brand Guideline Visual Adherence Checker (Figma)",
+            "description": "A Figma plugin built with Figma Make that automatically scans designs for adherence to brand visual guidelines (e.g., correct color usage, font families, logo placement, spacing rules). It highlights discrepancies and suggests corrections based on predefined rules or learned patterns, helping maintain brand consistency.",
+            "ai_tools_used": [
+              "Figma Make (for plugin UI, design analysis, and visual feedback)",
+              "Custom Computer Vision Model (via API, trained on brand assets)",
+              "Lovable (for collecting designer feedback on detected issues and model improvements)"
+            ],
+            "category_tags": [
+              "Computer Vision",
+              "Machine Learning",
+              "Design Automation"
+            ],
+            "source_platform": "Figma Community",
+            "original_url": "https://www.figma.com/community/plugin/brand-checker-ai",
+            "creator_name": "BrandGuard Solutions",
+            "creator_link": "https://brandguard.co",
+            "thumbnail_url": "https://images.unsplash.com/photo-1600132806370-bf17e65e935f?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "date_added": "2025-11-10"
+          },
+          {
+            "id": 9,
+            "title": "Personalized Study Plan & Resource Generator",
+            "description": "An interactive web application where users input their learning goals, preferred learning styles, and current knowledge level. The AI generates a personalized study plan, recommends relevant learning resources (articles, videos, courses), and provides estimated completion times. Lovable captures feedback on resource quality, while n8n manages data flow and plan generation.",
+            "ai_tools_used": [
+              "Lovable (for structured user input on learning preferences and resource quality feedback)",
+              "n8n (for orchestrating data collection, API calls to educational content, and plan output)",
+              "Cursor (for refining the study plan generation logic and prompts)",
+              "Google Gemini Pro API (for content synthesis and plan generation)"
+            ],
+            "category_tags": [
+              "Generative AI",
+              "NLP",
+              "Education Technology",
+              "Personalization"
+            ],
+            "source_platform": "Web Application",
+            "original_url": "https://studyflow.app/my-plan",
+            "creator_name": "LearnSmart AI",
+            "creator_link": "https://learnsmart.ai",
+            "thumbnail_url": "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "date_added": "2025-11-10"
+          }
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const app = {
+                // Elements
+                pages: document.querySelectorAll('.page-content'),
+                navLinks: document.querySelectorAll('.nav-link'),
+                mobileMenuButton: document.getElementById('mobile-menu-button'),
+                mobileMenu: document.getElementById('mobile-menu'),
+                projectGrid: document.getElementById('project-grid'),
+                detailPage: document.getElementById('detail-page'),
+                noResults: document.getElementById('no-results'),
+                
+                // Filters
+                searchInput: document.getElementById('search-input'),
+                toolFilter: document.getElementById('tool-filter'),
+                capabilityFilter: document.getElementById('capability-filter'),
+                platformFilter: document.getElementById('platform-filter'),
+
+                // Submission Form
+                submissionForm: document.getElementById('submission-form'),
+                formSteps: document.querySelectorAll('.form-step'),
+                prevBtn: document.getElementById('prev-btn'),
+                nextBtn: document.getElementById('next-btn'),
+                submitBtn: document.getElementById('submit-btn'),
+                formNav: document.getElementById('form-nav'),
+                newSubmissionBtn: document.getElementById('new-submission-btn'),
+                currentStep: 1,
+
+                init() {
+                    this.setupEventListeners();
+                    this.populateFilters();
+                    this.renderGallery(projectsData);
+                    this.showPage('gallery');
+                    this.updateFormUI();
+                },
+
+                setupEventListeners() {
+                    this.navLinks.forEach(link => {
+                        link.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            const page = e.currentTarget.dataset.page;
+                            this.showPage(page);
+                            this.mobileMenu.classList.add('hidden');
+                            this.mobileMenuButton.querySelector('svg.block').classList.remove('hidden');
+                            this.mobileMenuButton.querySelector('svg.hidden').classList.add('hidden');
+                        });
+                    });
+
+                    this.mobileMenuButton.addEventListener('click', () => {
+                        this.mobileMenu.classList.toggle('hidden');
+                        this.mobileMenuButton.querySelectorAll('svg').forEach(s => s.classList.toggle('hidden'));
+                    });
+
+                    const filters = [this.searchInput, this.toolFilter, this.capabilityFilter, this.platformFilter];
+                    filters.forEach(filter => filter.addEventListener('input', () => this.filterProjects()));
+
+                    // Form navigation
+                    this.nextBtn.addEventListener('click', () => this.changeStep(1));
+                    this.prevBtn.addEventListener('click', () => this.changeStep(-1));
+                    this.submissionForm.addEventListener('submit', (e) => this.handleFormSubmit(e));
+                    this.newSubmissionBtn.addEventListener('click', () => this.resetForm());
+                },
+
+                showPage(pageId, data = null) {
+                    window.scrollTo(0, 0);
+                    this.pages.forEach(page => {
+                        if (page.id === `${pageId}-page`) {
+                            page.classList.remove('hidden');
+                            page.classList.add('fade-in');
+                        } else {
+                            page.classList.add('hidden');
+                        }
+                    });
+
+                    if (pageId === 'detail' && data) {
+                        this.renderDetail(data);
+                    }
+                    if (pageId === 'submission') {
+                        this.resetForm();
+                    }
+                },
+
+                renderGallery(projects) {
+                    this.projectGrid.innerHTML = '';
+                    if (projects.length === 0) {
+                        this.noResults.classList.remove('hidden');
+                        this.projectGrid.classList.add('hidden');
+                        return;
+                    }
+                    
+                    this.noResults.classList.add('hidden');
+                    this.projectGrid.classList.remove('hidden');
+
+                    projects.forEach(project => {
+                        const card = document.createElement('div');
+                        card.className = 'bg-primary-light rounded-lg shadow-lg overflow-hidden transform hover:scale-105 transition-transform duration-300 cursor-pointer flex flex-col';
+                        card.dataset.projectId = project.id;
+
+                        card.innerHTML = `
+                            <img class="w-full h-48 object-cover" src="${project.thumbnail_url}" alt="${project.title}">
+                            <div class="p-6 flex flex-col flex-grow">
+                                <h3 class="text-xl font-bold text-primary-dark mb-2">${project.title}</h3>
+                                <p class="text-secondary-dark text-sm flex-grow">${project.description.substring(0, 100)}...</p>
+                                <div class="mt-4 flex flex-wrap gap-2">
+                                    ${project.category_tags.slice(0, 2).map(tag => `<span class="bg-secondary-light text-primary-dark text-xs font-semibold px-2.5 py-0.5 rounded-full">${tag}</span>`).join('')}
+                                </div>
+                            </div>
+                        `;
+                        card.addEventListener('click', () => this.showPage('detail', project));
+                        this.projectGrid.appendChild(card);
+                    });
+                },
+
+                renderDetail(project) {
+                    this.detailPage.innerHTML = `
+                        <div class="max-w-4xl mx-auto bg-primary-light p-6 sm:p-8 rounded-xl shadow-lg fade-in">
+                            <button id="back-to-gallery" class="mb-6 inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md text-primary-dark bg-secondary-light hover:bg-background focus:outline-none">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                                Back to Gallery
+                            </button>
+                            <h1 class="text-3xl md:text-4xl font-bold text-primary-dark mb-2">${project.title}</h1>
+                            <div class="mb-6 text-sm text-neutral-dark">
+                                By <a href="${project.creator_link}" target="_blank" rel="noopener noreferrer" class="font-semibold text-primary-dark hover:underline">${project.creator_name}</a> on ${new Date(project.date_added).toLocaleDateString()}
+                            </div>
+                            <img class="w-full h-64 md:h-96 object-cover rounded-lg mb-8 shadow-md" src="${project.thumbnail_url}" alt="${project.title}">
+                            
+                            <div class="prose max-w-none text-secondary-dark">
+                                <h2 class="text-2xl font-semibold text-secondary-dark border-b border-secondary-light pb-2 mb-4">Description</h2>
+                                <p>${project.description}</p>
+
+                                <h2 class="text-2xl font-semibold text-secondary-dark border-b border-secondary-light pb-2 mb-4 mt-8">AI Tools Used</h2>
+                                <ul class="list-disc list-inside">
+                                    ${project.ai_tools_used.map(tool => `<li>${tool}</li>`).join('')}
+                                </ul>
+
+                                <h2 class="text-2xl font-semibold text-secondary-dark border-b border-secondary-light pb-2 mb-4 mt-8">Capabilities</h2>
+                                <div class="flex flex-wrap gap-2">
+                                    ${project.category_tags.map(tag => `<span class="bg-secondary-light text-primary-dark text-sm font-semibold px-3 py-1 rounded-full">${tag}</span>`).join('')}
+                                </div>
+
+                                <h2 class="text-2xl font-semibold text-secondary-dark border-b border-secondary-light pb-2 mb-4 mt-8">Details</h2>
+                                <p><strong>Source Platform:</strong> ${project.source_platform}</p>
+                                <a href="${project.original_url}" target="_blank" rel="noopener noreferrer" class="mt-6 inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-primary-dark hover:bg-secondary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-dark no-underline">
+                                    Visit Original Project
+                                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                </a>
+                            </div>
+                        </div>
+                    `;
+                    document.getElementById('back-to-gallery').addEventListener('click', () => this.showPage('gallery'));
+                },
+
+                populateFilters() {
+                    const tools = [...new Set(projectsData.flatMap(p => p.ai_tools_used.map(tool => tool.split('(')[0].trim())))].sort();
+                    const capabilities = [...new Set(projectsData.flatMap(p => p.category_tags))].sort();
+                    const platforms = [...new Set(projectsData.map(p => p.source_platform))].sort();
+
+                    this.populateSelect(this.toolFilter, tools, 'All AI Tools');
+                    this.populateSelect(this.capabilityFilter, capabilities, 'All Capabilities');
+                    this.populateSelect(this.platformFilter, platforms, 'All Build Types');
+                },
+
+                populateSelect(selectElement, options, defaultText) {
+                    selectElement.innerHTML = `<option value="">${defaultText}</option>`;
+                    options.forEach(option => {
+                        const opt = document.createElement('option');
+                        opt.value = option;
+                        opt.textContent = option;
+                        selectElement.appendChild(opt);
+                    });
+                },
+
+                filterProjects() {
+                    const searchTerm = this.searchInput.value.toLowerCase();
+                    const selectedTool = this.toolFilter.value;
+                    const selectedCapability = this.capabilityFilter.value;
+                    const selectedPlatform = this.platformFilter.value;
+
+                    const filteredProjects = projectsData.filter(project => {
+                        const titleMatch = project.title.toLowerCase().includes(searchTerm);
+                        const descMatch = project.description.toLowerCase().includes(searchTerm);
+                        const toolMatch = !selectedTool || project.ai_tools_used.some(tool => tool.includes(selectedTool));
+                        const capabilityMatch = !selectedCapability || project.category_tags.includes(selectedCapability);
+                        const platformMatch = !selectedPlatform || project.source_platform === selectedPlatform;
+
+                        return (titleMatch || descMatch) && toolMatch && capabilityMatch && platformMatch;
+                    });
+
+                    this.renderGallery(filteredProjects);
+                },
+
+                // Form Logic
+                changeStep(n) {
+                    // Validation for current step
+                    const currentStepElement = this.formSteps[this.currentStep - 1];
+                    const inputs = currentStepElement.querySelectorAll('input[required], textarea[required], select[required]');
+                    let isValid = true;
+                    inputs.forEach(input => {
+                        if (!input.checkValidity()) {
+                            input.reportValidity();
+                            isValid = false;
+                        }
+                    });
+
+                    if (n > 0 && !isValid) return;
+
+                    this.currentStep += n;
+                    if (this.currentStep > this.formSteps.length) {
+                        this.currentStep = this.formSteps.length;
+                    }
+                    if (this.currentStep < 1) {
+                        this.currentStep = 1;
+                    }
+                    this.updateFormUI();
+                },
+
+                updateFormUI() {
+                    this.formSteps.forEach((step, index) => {
+                        step.classList.toggle('active', index + 1 === this.currentStep);
+                        step.classList.toggle('hidden', index + 1 !== this.currentStep);
+                    });
+
+                    this.prevBtn.style.display = this.currentStep === 1 || this.currentStep === 4 ? 'none' : 'inline-flex';
+                    this.nextBtn.style.display = this.currentStep >= 3 ? 'none' : 'inline-flex';
+                    this.submitBtn.style.display = this.currentStep === 3 ? 'inline-flex' : 'none';
+                    this.formNav.style.display = this.currentStep === 4 ? 'none' : 'flex';
+                },
+                
+                handleFormSubmit(e) {
+                    e.preventDefault();
+                    const finalStepElement = this.formSteps[this.currentStep - 1];
+                    const inputs = finalStepElement.querySelectorAll('input[required], textarea[required], select[required]');
+                    let isValid = true;
+                    inputs.forEach(input => {
+                        if (!input.checkValidity()) {
+                            input.reportValidity();
+                            isValid = false;
+                        }
+                    });
+
+                    if (isValid) {
+                        this.currentStep = 4;
+                        this.updateFormUI();
+                    }
+                },
+
+                resetForm() {
+                    this.submissionForm.reset();
+                    this.currentStep = 1;
+                    this.updateFormUI();
+                }
+            };
+
+            app.init();
+        });
+    </script>
+</body>
+</html>

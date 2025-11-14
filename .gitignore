@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Environment variables
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# API Keys (keep structure but not actual keys)
+youtubedataapikey.json
+
+# Old data files (keep latest.json)
+found_examples_2025*.json
+email_digest_*.html
+
+# Temporary files
+*.tmp
+*.bak
+

@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vibe-Coding Examples Hub - AI Coding Examples</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            background: #ffffff;
+            min-height: 100vh;
+            padding: 0;
+            color: #000000;
+            margin: 0;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 80px 24px;
+        }
+
+        header {
+            text-align: center;
+            color: #000000;
+            margin-bottom: 80px;
+            padding: 0;
+        }
+
+        header h1 {
+            font-size: 3.5em;
+            font-weight: 600;
+            margin-bottom: 24px;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            color: #000000;
+        }
+
+        header p {
+            font-size: 1.125em;
+            color: #666666;
+            font-weight: 400;
+            margin-top: 16px;
+            line-height: 1.6;
+        }
+
+        .highlight {
+            background: transparent;
+            color: #000000;
+            padding: 0;
+            display: inline;
+            font-weight: 600;
+        }
+
+        .stats-bar {
+            background: transparent;
+            border-radius: 0;
+            padding: 40px 0;
+            margin-bottom: 60px;
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            flex-wrap: wrap;
+            box-shadow: none;
+            border-top: 1px solid #e5e5e5;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 0;
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: #000000;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            color: #666666;
+            font-size: 0.95em;
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Compact Filters (Opal Style) */
+        .filters-compact {
+            background: #f9f9ff;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 32px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .filter-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+        }
+
+        .filter-item {
+            width: 100%;
+        }
+
+        .filter-select {
+            width: 100%;
+            padding: 10px 16px;
+            border: 1px solid #e5e5e5;
+            background: #ffffff;
+            color: #000000;
+            border-radius: 8px;
+            font-size: 0.875em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 36px;
+        }
+
+        .filter-select:hover {
+            border-color: #667eea;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .examples-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+            gap: 24px;
+            margin-bottom: 80px;
+        }
+
+        .example-card {
+            background: #ffffff;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #e5e5e5;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .example-card:hover {
+            border-color: #667eea;
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.15);
+        }
+
+        .card-thumbnail {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            background: #f0f0f0;
+        }
+
+        .platform-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(0, 0, 0, 0.8);
+            color: #ffffff;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.75em;
+            font-weight: 600;
+            z-index: 10;
+        }
+
+        .platform-badge.linkedin {
+            background: #0077b5;
+        }
+
+        .platform-badge.youtube {
+            background: #ff0000;
+        }
+
+        .thumbnail-container {
+            position: relative;
+            width: 100%;
+            height: 220px;
+            overflow: hidden;
+            background: #f5f5f5;
+        }
+
+        .thumbnail-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 3em;
+        }
+
+        .thumbnail-placeholder.linkedin {
+            background: linear-gradient(135deg, #0077b5 0%, #005885 100%);
+        }
+
+        .card-content {
+            padding: 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 12px;
+        }
+
+        .card-title {
+            font-size: 1.25em;
+            font-weight: 600;
+            color: #000000;
+            line-height: 1.4;
+            flex: 1;
+            margin-right: 12px;
+            letter-spacing: -0.01em;
+        }
+
+        .relevance-badge {
+            background: #667eea;
+            color: #ffffff;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.75em;
+            white-space: nowrap;
+            font-weight: 600;
+            border: none;
+        }
+
+        .project-name {
+            font-size: 0.95em;
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .project-summary {
+            color: #666666;
+            font-size: 0.9em;
+            line-height: 1.6;
+            margin-bottom: 16px;
+            flex: 1;
+            min-height: 3em;
+        }
+
+        .project-summary:empty {
+            display: none;
+        }
+
+        .card-stats {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 16px;
+            font-size: 0.85em;
+            color: #999999;
+        }
+
+        .stat-icon {
+            display: inline-block;
+            margin-right: 4px;
+        }
+
+        .card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .tag {
+            background: #f5f5f5;
+            color: #000000;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.75em;
+            font-weight: 500;
+            border: 1px solid #e5e5e5;
+        }
+
+        .tag.tool-tag {
+            background: #ebf1ff;
+            color: #667eea;
+            border-color: #d0d9ff;
+            font-weight: 600;
+        }
+
+        .tag.tag-more {
+            background: #e8e8e8;
+            color: #999999;
+            font-style: italic;
+            border-color: #d0d0d0;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 20px;
+            border-top: 1px solid #e5e5e5;
+        }
+
+        .creator-link {
+            color: #666666;
+            text-decoration: none;
+            font-size: 0.875em;
+            transition: color 0.2s;
+            font-weight: 500;
+        }
+
+        .creator-link:hover {
+            color: #667eea;
+        }
+
+        .watch-btn, .post-btn {
+            background: #000000;
+            color: #ffffff;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            display: inline-block;
+            font-size: 0.875em;
+            border: 1px solid #000000;
+        }
+
+        .watch-btn:hover {
+            background: #667eea;
+            border-color: #667eea;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .post-btn {
+            background: #0077b5;
+            border-color: #0077b5;
+        }
+
+        .post-btn:hover {
+            background: #005885;
+            border-color: #005885;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 119, 181, 0.3);
+        }
+
+        .complexity-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.7em;
+            font-weight: 600;
+            margin-left: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .complexity-badge.no-code {
+            background: #f5f5f5;
+            color: #000000;
+            border: 1px solid #e5e5e5;
+        }
+
+        .complexity-badge.low-code {
+            background: #f5f5f5;
+            color: #000000;
+            border: 1px solid #e5e5e5;
+        }
+
+        .complexity-badge.full-build {
+            background: #f5f5f5;
+            color: #000000;
+            border: 1px solid #e5e5e5;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            background: #ffffff;
+            border-radius: 12px;
+            color: #666666;
+            border: 1px solid #e5e5e5;
+        }
+
+        .empty-state h2 {
+            margin-bottom: 16px;
+            color: #000000;
+            font-weight: 600;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #000000;
+            font-size: 1.2em;
+        }
+
+        @media (max-width: 768px) {
+            .examples-grid {
+                grid-template-columns: 1fr;
+            }
+
+            header h1 {
+                font-size: 2em;
+            }
+
+            .filters-compact {
+                padding: 12px;
+            }
+
+            .filter-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Vibe-Coding <span class="highlight">Examples Hub</span></h1>
+            <p>See how others are using AI to build amazing things</p>
+        </header>
+
+
+        <!-- Compact Filters (Opal Style) -->
+        <div class="filters-compact">
+            <div class="filter-row">
+                <div class="filter-item">
+                    <select id="category-filter" class="filter-select">
+                        <option value="all">All Categories</option>
+                        {% for category in all_categories %}
+                        <option value="{{ category }}">{{ category }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <select id="complexity-filter" class="filter-select">
+                        <option value="all">All Complexity</option>
+                        <option value="no-code">No-Code</option>
+                        <option value="low-code">Low-Code</option>
+                        <option value="full-build">Full Build</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <select id="tool-filter" class="filter-select">
+                        <option value="all">All Tools</option>
+                        {% for tool in all_tools %}
+                        <option value="{{ tool }}">{{ tool }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        {% if examples %}
+        <div class="examples-grid">
+            {% for example in examples %}
+            <div class="example-card" 
+                 data-complexity="{{ (example.build_complexity|default('', true)|lower|replace(' ', '-')) }}"
+                 data-tools="{% for tool in example.ai_tools_used %}{{ tool }} {% endfor %}"
+                 data-platform="{{ example.source_platform|lower }}"
+                 data-category="{{ example.primary_category|default('Development', true) }}">
+                <div class="thumbnail-container">
+                    {% if example.thumbnail_url and example.thumbnail_url != '' %}
+                    <img src="{{ example.thumbnail_url }}" alt="{{ example.title }}" class="card-thumbnail" 
+                         onerror="handleThumbnailError(this, '{{ example.source_platform }}')">
+                    {% else %}
+                    <div class="thumbnail-placeholder {% if example.source_platform == 'LinkedIn' %}linkedin{% endif %}">
+                        {% if example.source_platform == 'LinkedIn' %}💼{% else %}📺{% endif %}
+                    </div>
+                    {% endif %}
+                    <span class="platform-badge {% if example.source_platform == 'LinkedIn' %}linkedin{% else %}youtube{% endif %}">
+                        {{ example.source_platform }}
+                    </span>
+                </div>
+                
+                <div class="card-content">
+                    <div class="card-header">
+                        <h3 class="card-title">{{ example.title }}</h3>
+                        <span class="relevance-badge">{{ example.relevance_score }}/10</span>
+                    </div>
+
+                    <div class="project-name">
+                        🎯 {{ example.project_name }}
+                        <span class="complexity-badge {{ example.build_complexity|lower|replace(' ', '-') }}">
+                            {{ example.build_complexity }}
+                        </span>
+                    </div>
+
+                    {% if example.project_summary and example.project_summary.strip() %}
+                    <p class="project-summary">{{ example.project_summary }}</p>
+                    {% elif example.description and example.description.strip() %}
+                    <p class="project-summary">{{ example.description[:150] }}{% if example.description|length > 150 %}...{% endif %}</p>
+                    {% endif %}
+
+                    <div class="card-stats">
+                        {% if example.source_platform == 'YouTube' %}
+                            {% if example.view_count > 0 %}
+                                <span>👁️ {{ example.view_count|format_number }} Views</span>
+                            {% endif %}
+                            {% if example.like_count > 0 %}
+                                <span>👍 {{ example.like_count|format_number }} Likes</span>
+                            {% endif %}
+                        {% elif example.source_platform == 'LinkedIn' %}
+                            {% if example.comment_count > 0 %}
+                                <span>💬 {{ example.comment_count|format_number }} Comments</span>
+                            {% endif %}
+                        {% else %}
+                            {% if example.view_count > 0 %}
+                                <span>👁️ {{ example.view_count|format_number }} Views</span>
+                            {% endif %}
+                            {% if example.like_count > 0 %}
+                                <span>👍 {{ example.like_count|format_number }} Likes</span>
+                            {% endif %}
+                            {% if example.comment_count > 0 %}
+                                <span>💬 {{ example.comment_count|format_number }} Comments</span>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+
+                    <div class="card-tags">
+                        {% set tools_list = example.ai_tools_used[:3] if example.ai_tools_used else [] %}
+                        {% set categories_list = example.category_tags[:3] if example.category_tags else [] %}
+                        {% for tool in tools_list %}
+                        <span class="tag tool-tag">{{ tool }}</span>
+                        {% endfor %}
+                        {% for category in categories_list %}
+                        <span class="tag">{{ category }}</span>
+                        {% endfor %}
+                        {% set total_tools = example.ai_tools_used|length if example.ai_tools_used else 0 %}
+                        {% set total_categories = example.category_tags|length if example.category_tags else 0 %}
+                        {% set total_tags = total_tools + total_categories %}
+                        {% if total_tags > 6 %}
+                        <span class="tag tag-more">+{{ total_tags - 6 }} more</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="card-footer">
+                        <a href="{{ example.creator_link }}" target="_blank" class="creator-link">
+                            👤 {{ example.creator_name }}
+                        </a>
+                        {% if example.source_platform == 'LinkedIn' %}
+                        <a href="{{ example.original_url }}" target="_blank" class="post-btn">
+                            Go to Post →
+                        </a>
+                        {% else %}
+                        <a href="{{ example.original_url }}" target="_blank" class="watch-btn">
+                            Watch Video →
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <h2>📭 No Examples Available</h2>
+            <p>Please run the crawler script to fetch example data</p>
+            <p style="margin-top: 10px; font-size: 0.9em; color: #999;">
+                Run: python "AI Examples Crawler/ai_examples_crawler.py"
+            </p>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        // Handle thumbnail error
+        function handleThumbnailError(img, platform) {
+            const container = img.parentElement;
+            const placeholderClass = platform === 'LinkedIn' ? 'thumbnail-placeholder linkedin' : 'thumbnail-placeholder';
+            const icon = platform === 'LinkedIn' ? '💼' : '📺';
+            const badgeClass = platform === 'LinkedIn' ? 'platform-badge linkedin' : 'platform-badge youtube';
+            
+            container.innerHTML = `
+                <div class="${placeholderClass}">${icon}</div>
+                <span class="${badgeClass}">${platform}</span>
+            `;
+        }
+
+        // Filter state
+        let currentCategoryFilter = 'all';
+        let currentComplexityFilter = 'all';
+        let currentToolFilter = 'all';
+
+        // Apply filters
+        function applyFilters() {
+            const cards = document.querySelectorAll('.example-card');
+            let visibleCount = 0;
+            
+            cards.forEach(card => {
+                let showCard = true;
+                
+                // Category filter
+                if (currentCategoryFilter !== 'all') {
+                    const category = card.dataset.category || 'Development';
+                    if (category !== currentCategoryFilter) {
+                        showCard = false;
+                    }
+                }
+                
+                // Complexity filter
+                if (showCard && currentComplexityFilter !== 'all') {
+                    const complexity = card.dataset.complexity || '';
+                    if (complexity !== currentComplexityFilter) {
+                        showCard = false;
+                    }
+                }
+                
+                // Tool filter
+                if (showCard && currentToolFilter !== 'all') {
+                    const tools = (card.dataset.tools || '').trim();
+                    if (!tools || !tools.includes(currentToolFilter)) {
+                        showCard = false;
+                    }
+                }
+                
+                card.style.display = showCard ? '' : 'none';
+                if (showCard) visibleCount++;
+            });
+            
+            // Update empty state
+            const emptyState = document.querySelector('.empty-state');
+            if (visibleCount === 0) {
+                if (!emptyState) {
+                    const grid = document.querySelector('.examples-grid');
+                    if (grid) {
+                        grid.insertAdjacentHTML('afterend', `
+                            <div class="empty-state">
+                                <h2>No examples found</h2>
+                                <p>Try adjusting your filters to see more results.</p>
+                            </div>
+                        `);
+                    }
+                }
+            } else {
+                if (emptyState) {
+                    emptyState.remove();
+                }
+            }
+        }
+
+        // Initialize filters when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            // Category filter (select dropdown)
+            const categorySelect = document.getElementById('category-filter');
+            if (categorySelect) {
+                categorySelect.addEventListener('change', function() {
+                    currentCategoryFilter = this.value || 'all';
+                    console.log('Category filter changed to:', currentCategoryFilter);
+                    applyFilters();
+                });
+            }
+
+            // Complexity filter (select dropdown)
+            const complexitySelect = document.getElementById('complexity-filter');
+            if (complexitySelect) {
+                complexitySelect.addEventListener('change', function() {
+                    currentComplexityFilter = this.value || 'all';
+                    console.log('Complexity filter changed to:', currentComplexityFilter);
+                    applyFilters();
+                });
+            }
+
+            // Tool filter (select dropdown)
+            const toolSelect = document.getElementById('tool-filter');
+            if (toolSelect) {
+                toolSelect.addEventListener('change', function() {
+                    currentToolFilter = this.value || 'all';
+                    console.log('Tool filter changed to:', currentToolFilter);
+                    applyFilters();
+                });
+            }
+        });
+    </script>
+</body>
+</html>
+
