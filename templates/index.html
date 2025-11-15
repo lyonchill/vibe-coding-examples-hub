@@ -158,6 +158,8 @@
             display: flex;
             flex-direction: column;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+            position: relative;
         }
 
         .example-card:hover {
@@ -483,7 +485,8 @@
                  data-complexity="{{ (example.build_complexity|default('', true)|lower|replace(' ', '-')) }}"
                  data-tools="{% for tool in example.ai_tools_used %}{{ tool }} {% endfor %}"
                  data-platform="{{ example.source_platform|lower }}"
-                 data-category="{{ example.primary_category|default('Development', true) }}">
+                 data-category="{{ example.primary_category|default('Development', true) }}"
+                 data-url="{{ example.original_url }}">
                 <div class="thumbnail-container">
                     {% if example.thumbnail_url and example.thumbnail_url != '' %}
                     <img src="{{ example.thumbnail_url }}" alt="{{ example.title }}" class="card-thumbnail" 
@@ -695,6 +698,23 @@
                     applyFilters();
                 });
             }
+
+            // 讓整張卡片可點擊跳轉到原始連結
+            const cards = document.querySelectorAll('.example-card');
+            cards.forEach(card => {
+                card.addEventListener('click', function(e) {
+                    // 如果點擊的是按鈕或連結，不處理（讓按鈕自己處理）
+                    if (e.target.tagName === 'A' || e.target.closest('a')) {
+                        return;
+                    }
+                    
+                    // 從 data-url 獲取連結
+                    const url = card.dataset.url;
+                    if (url) {
+                        window.open(url, '_blank');
+                    }
+                });
+            });
         });
     </script>
 </body>
