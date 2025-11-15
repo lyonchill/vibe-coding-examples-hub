@@ -5,61 +5,86 @@ Flask Web Application for Vibe-Coding Examples Hub
 
 import os
 import json
+import logging
 from datetime import datetime
 from flask import Flask, render_template, jsonify, request
 from pathlib import Path
 
-app = Flask(__name__)
+# 配置日誌
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# 確保模板目錄路徑正確
+BASE_DIR = Path(__file__).parent
+TEMPLATE_DIR = BASE_DIR / 'templates'
+
+# 確保模板目錄存在
+TEMPLATE_DIR.mkdir(parents=True, exist_ok=True)
+
+# 初始化 Flask 應用，明確指定模板目錄
+app = Flask(__name__, template_folder=str(TEMPLATE_DIR))
 
 # 數據文件路徑
-DATA_DIR = Path(__file__).parent
+DATA_DIR = BASE_DIR
 EXAMPLES_FILE = DATA_DIR / "found_examples_latest.json"
+
+logger.info(f"應用啟動 - 模板目錄: {TEMPLATE_DIR}")
+logger.info(f"數據目錄: {DATA_DIR}")
+logger.info(f"模板文件存在: {(TEMPLATE_DIR / 'index.html').exists()}")
+logger.info(f"數據文件存在: {EXAMPLES_FILE.exists()}")
 
 
 def load_examples():
     """載入案例數據"""
-    # 優先載入 latest.json
-    latest_file = DATA_DIR / "found_examples_latest.json"
-    
-    if latest_file.exists():
-        try:
-            with open(latest_file, 'r', encoding='utf-8') as f:
-                examples = json.load(f)
-                # 排序：YouTube 按觀看數，LinkedIn 按相關性分數
-                # 確保 YouTube 在前面，LinkedIn 在後面
-                examples.sort(key=lambda x: (
-                    0 if x.get('source_platform') == 'YouTube' else 1,  # YouTube 優先
-                    x.get('view_count', 0) if x.get('source_platform') == 'YouTube' else 0,
-                    x.get('relevance_score', 0)
-                ), reverse=True)
-                return examples[:40]  # 返回前 40 個（30 YouTube + 10 LinkedIn）
-        except Exception as e:
-            import logging
-            logging.error(f"載入數據錯誤: {e}")
-            return []
-    
-    # 如果沒有 latest.json，嘗試載入最新的帶日期的文件
-    json_files = list(DATA_DIR.glob("found_examples_*.json"))
-    
-    if json_files:
-        # 找到最新的文件
-        latest_file = max(json_files, key=lambda p: p.stat().st_mtime)
-        try:
-            with open(latest_file, 'r', encoding='utf-8') as f:
-                examples = json.load(f)
-                # 排序：YouTube 按觀看數，LinkedIn 按相關性分數
-                examples.sort(key=lambda x: (
-                    0 if x.get('source_platform') == 'YouTube' else 1,
-                    x.get('view_count', 0) if x.get('source_platform') == 'YouTube' else 0,
-                    x.get('relevance_score', 0)
-                ), reverse=True)
-                return examples[:40]  # 返回前 40 個
-        except Exception as e:
-            import logging
-            logging.error(f"載入數據錯誤: {e}")
-            return []
-    
-    return []
+    try:
+        # 優先載入 latest.json
+        latest_file = DATA_DIR / "found_examples_latest.json"
+        
+        if latest_file.exists():
+            try:
+                logger.info(f"載入數據文件: {latest_file}")
+                with open(latest_file, 'r', encoding='utf-8') as f:
+                    examples = json.load(f)
+                    logger.info(f"成功載入 {len(examples)} 個案例")
+                    # 排序：YouTube 按觀看數，LinkedIn 按相關性分數
+                    # 確保 YouTube 在前面，LinkedIn 在後面
+                    examples.sort(key=lambda x: (
+                        0 if x.get('source_platform') == 'YouTube' else 1,  # YouTube 優先
+                        x.get('view_count', 0) if x.get('source_platform') == 'YouTube' else 0,
+                        x.get('relevance_score', 0)
+                    ), reverse=True)
+                    return examples[:40]  # 返回前 40 個（30 YouTube + 10 LinkedIn）
+            except Exception as e:
+                logger.error(f"載入數據錯誤: {e}", exc_info=True)
+                return []
+        
+        # 如果沒有 latest.json，嘗試載入最新的帶日期的文件
+        json_files = list(DATA_DIR.glob("found_examples_*.json"))
+        
+        if json_files:
+            # 找到最新的文件
+            latest_file = max(json_files, key=lambda p: p.stat().st_mtime)
+            try:
+                logger.info(f"載入數據文件: {latest_file}")
+                with open(latest_file, 'r', encoding='utf-8') as f:
+                    examples = json.load(f)
+                    logger.info(f"成功載入 {len(examples)} 個案例")
+                    # 排序：YouTube 按觀看數，LinkedIn 按相關性分數
+                    examples.sort(key=lambda x: (
+                        0 if x.get('source_platform') == 'YouTube' else 1,
+                        x.get('view_count', 0) if x.get('source_platform') == 'YouTube' else 0,
+                        x.get('relevance_score', 0)
+                    ), reverse=True)
+                    return examples[:40]  # 返回前 40 個
+            except Exception as e:
+                logger.error(f"載入數據錯誤: {e}", exc_info=True)
+                return []
+        
+        logger.warning("未找到數據文件，返回空列表")
+        return []
+    except Exception as e:
+        logger.error(f"load_examples 發生未預期錯誤: {e}", exc_info=True)
+        return []
 
 
 def format_number(num):
@@ -85,7 +110,9 @@ def format_number_filter(num):
 def index():
     """首頁"""
     try:
+        logger.info("處理首頁請求")
         examples = load_examples()
+        logger.info(f"載入了 {len(examples)} 個案例")
         
         # 提取所有可用的工具
         all_tools = set()
@@ -101,19 +128,23 @@ def index():
                 all_categories.add(category)
         all_categories = sorted(list(all_categories))
         
+        logger.info(f"渲染模板，工具數: {len(all_tools)}, 分類數: {len(all_categories)}")
         return render_template('index.html', 
                              examples=examples, 
                              format_number=format_number,
                              all_tools=all_tools,
                              all_categories=all_categories)
     except Exception as e:
-        import logging
-        logging.error(f"首頁載入錯誤: {e}")
-        return render_template('index.html', 
-                             examples=[], 
-                             format_number=format_number,
-                             all_tools=[],
-                             all_categories=[]), 500
+        logger.error(f"首頁載入錯誤: {e}", exc_info=True)
+        try:
+            return render_template('index.html', 
+                                 examples=[], 
+                                 format_number=format_number,
+                                 all_tools=[],
+                                 all_categories=[]), 500
+        except Exception as template_error:
+            logger.error(f"渲染錯誤模板也失敗: {template_error}", exc_info=True)
+            return f"<h1>錯誤</h1><p>無法載入頁面: {str(e)}</p>", 500
 
 
 @app.route('/api/examples')
@@ -184,12 +215,10 @@ def refresh():
 
 
 if __name__ == '__main__':
-    # 確保模板目錄存在
-    template_dir = DATA_DIR / 'templates'
-    template_dir.mkdir(exist_ok=True)
-    
-    print("🚀 啟動 Vibe-Coding Examples Hub...")
-    print(f"📁 數據目錄: {DATA_DIR}")
+    # 開發環境啟動
+    logger.info("🚀 啟動 Vibe-Coding Examples Hub（開發模式）...")
+    logger.info(f"📁 數據目錄: {DATA_DIR}")
+    logger.info(f"📁 模板目錄: {TEMPLATE_DIR}")
     
     # 生產環境：使用環境變量 PORT（Render 等託管服務會設置）
     # 開發環境：嘗試使用端口 5001，如果被占用則使用 8080
@@ -210,7 +239,7 @@ if __name__ == '__main__':
     host = '0.0.0.0' if 'PORT' in os.environ else '127.0.0.1'
     debug = 'PORT' not in os.environ  # 只在開發環境啟用 debug
     
-    print(f"🌐 訪問 http://localhost:{port} 查看網站")
+    logger.info(f"🌐 訪問 http://localhost:{port} 查看網站")
     
     app.run(debug=debug, host=host, port=port)
 
