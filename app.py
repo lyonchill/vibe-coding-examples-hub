@@ -21,8 +21,12 @@ TEMPLATE_DIR = BASE_DIR / 'templates'
 # 確保模板目錄存在
 TEMPLATE_DIR.mkdir(parents=True, exist_ok=True)
 
-# 初始化 Flask 應用，明確指定模板目錄
-app = Flask(__name__, template_folder=str(TEMPLATE_DIR))
+# 初始化 Flask 應用，明確指定模板目錄和靜態文件目錄
+STATIC_DIR = BASE_DIR / 'static'
+STATIC_DIR.mkdir(parents=True, exist_ok=True)
+app = Flask(__name__, 
+            template_folder=str(TEMPLATE_DIR),
+            static_folder=str(STATIC_DIR))
 
 # 數據文件路徑
 DATA_DIR = BASE_DIR
